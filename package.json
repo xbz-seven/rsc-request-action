@@ -1,0 +1,15 @@
+{
+    "private": true,
+    "scripts": {
+        "build": "node scripts/build.mjs"
+    },
+    "dependencies": {
+        "@swc/helpers": "^0.4.37"
+    },
+    "devDependencies": {
+        "bn-types": "latest",
+        "rollup": "^4.24.0",
+        "rollup-plugin-esbuild-minify": "^1.1.2",
+        "rollup-plugin-swc3": "^0.12.1"
+    }
+}

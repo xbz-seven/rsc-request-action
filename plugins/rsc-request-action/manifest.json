@@ -1,0 +1,19 @@
+{
+    "id": "uwukitty.rsc-request-action",
+    "name": "RSC Request Action",
+    "description": "Adds a Request Action button to message long-press menu. Copies UID, reason, action, and message link to clipboard.",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "uwukitty",
+            "id": "0"
+        }
+    ],
+    "main": "src/index.ts",
+    "vendetta": {
+        "icon": "CopyIcon"
+    },
+    "bunny": {
+        "icon": "CopyIcon"
+    }
+}
