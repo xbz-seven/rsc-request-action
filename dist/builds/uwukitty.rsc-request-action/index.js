@@ -1,0 +1,4 @@
+var plugin=(function(r,n,t,h){"use strict";var d=n.findByProps("openLazy","hideActionSheet"),{showToast:y}=n.findByProps("showToast")??{},{getAssetIDByName:i}=n.findByProps("getAssetIDByName")??{},f={onLoad(){var a=[];a.push(r.patcher.before("openLazy",d,([s,l,v])=>{var e=v?.message;l!=="MessageLongPressActionSheet"||!e||s.then(b=>{var c=r.patcher.after("default",b,(B,u)=>{t.React.useEffect(()=>()=>c(),[]);var o=h.findInReactTree(u,A=>A?.[0]?.type?.name==="ButtonRow");if(!o)return u;var g=`https://discord.com/channels/${e.guild_id||"@me"}/${e.channel_id}/${e.id}`,p=o[0]?.type;p&&o.push(t.React.createElement(p,{label:"Request Action",icon:i?.("CopyIcon"),onPress:()=>{t.clipboard.setString(`UID: ${e.author.id}
+Reason: 
+Action: 
+PROOF: ${g}`),y?.("Copied to clipboard",i?.("CopyIcon"))}}))});a.push(c)})})),this.unpatch=()=>a.forEach(s=>s())},onUnload(){this.unpatch?.()}};return f})(bunny.api,bunny.metro,bunny.metro.common,bunny.utils);
