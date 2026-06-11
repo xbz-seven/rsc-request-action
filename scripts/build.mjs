@@ -9,7 +9,7 @@ const isProduction = !process.argv.includes("--dev");
 
 for (const plug of await readdir("./plugins")) {
     const manifest = JSON.parse((await readFile(`./plugins/${plug}/manifest.json`)).toString());
-    const outPath = `./dist/builds/${manifest.id}/index.js`;
+    const outPath = `./builds/${manifest.id}/index.js`;
 
     const globalMap = {
         "react": "React",
@@ -69,8 +69,22 @@ for (const plug of await readdir("./plugins")) {
         });
 
         await bundle.close();
+
+        manifest.main = "index.js";
+        const outDir = outPath.substring(0, outPath.lastIndexOf("/"));
+        await writeFile(`${outDir}/manifest.json`, JSON.stringify(manifest, null, 4));
     } catch (error) {
         console.error(`failed building ${manifest.id}:`, error);
         process.exit(1);
     }
 }
+
+const repo = {};
+for (const plug of await readdir("./plugins")) {
+    const manifest = JSON.parse((await readFile(`./plugins/${plug}/manifest.json`)).toString());
+    repo[manifest.id] = {
+        version: manifest.version,
+        alwaysFetch: false,
+    };
+}
+await writeFile("./repo.json", JSON.stringify(repo, null, 4));
