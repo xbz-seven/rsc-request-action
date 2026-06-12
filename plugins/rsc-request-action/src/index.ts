@@ -9,54 +9,54 @@ const { getAssetIDByName } = findByProps("getAssetIDByName") ?? {};
 
 export default {
     onLoad() {
-        const patches = [];
+        let currentMessage = null;
+        this.patches = [];
 
-        patches.push(
-            patcher.before("openLazy", LazyActionSheet, ([component, key, msg]) => {
-                const message = msg?.message;
-                if (key !== "MessageLongPressActionSheet" || !message) return;
+        this.patches.push(
+            patcher.before("openLazy", LazyActionSheet, ([component, key, extra]) => {
+                if (key !== "MessageLongPressActionSheet") return;
+                currentMessage = extra?.message ?? null;
+                if (!currentMessage) return;
 
                 component.then(mod => {
-                    const sheet = mod?.default || mod;
-                    if (typeof sheet !== "function") return;
-
-                    const link = `https://discord.com/channels/${message.guild_id || "@me"}/${message.channel_id}/${message.id}`;
-
-                    const unp = patcher.after("default", { default: sheet }, (_, comp) => {
-                        React.useEffect(() => () => unp(), []);
-
+                    const unpatch = patcher.after("default", mod, (_, comp) => {
                         const buttons = findInReactTree(
                             comp,
-                            x => x?.[0]?.type?.name === "ButtonRow"
+                            x => Array.isArray(x) && x.length > 0 && x[0]?.props?.label
                         );
-                        if (!buttons) return comp;
+                        if (!buttons) return;
 
-                        const ButtonType = buttons[0]?.type;
-                        if (!ButtonType) return comp;
+                        const hasOurs = buttons.some(
+                            b => b?.props?.["data-rsc-action"]
+                        );
+                        if (hasOurs) return;
+
+                        const link = `https://discord.com/channels/${currentMessage.guild_id || "@me"}/${currentMessage.channel_id}/${currentMessage.id}`;
 
                         buttons.push(
-                            React.createElement(ButtonType, {
+                            React.createElement(buttons[0]?.type ?? "View", {
                                 label: "Request Action",
-                                icon: getAssetIDByName?.("CopyIcon"),
+                                "data-rsc-action": true,
                                 onPress: () => {
                                     clipboard.setString(
-                                        `UID: ${message.author.id}\nReason: \nAction: \nPROOF: ${link}`
+                                        `UID: ${currentMessage.author.id}\nReason: \nAction: \nPROOF: ${link}`
                                     );
-                                    showToast?.("Copied to clipboard", getAssetIDByName?.("CopyIcon"));
+                                    showToast?.(
+                                        "Copied to clipboard",
+                                        getAssetIDByName?.("CopyIcon")
+                                    );
                                 },
                             })
                         );
                     });
 
-                    patches.push(unp);
+                    this.patches.push(unpatch);
                 });
             })
         );
-
-        this.unpatch = () => patches.forEach(p => p());
     },
 
     onUnload() {
-        this.unpatch?.();
+        (this.patches ?? []).forEach(p => p());
     },
 };
