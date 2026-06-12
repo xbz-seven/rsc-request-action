@@ -1,7 +1,7 @@
 {
-    "id": "uwukitty.rsc-request-action",
-    "name": "RSC Request Action",
-    "description": "Adds a Request Action button to message long-press menu. Copies UID, reason, action, and message link to clipboard.",
+    "id": "uwukitty.rightclick-plus",
+    "name": "RightClick+",
+    "description": "Add custom buttons to Discord's right-click menu. Define your own actions with dynamic variables.",
     "version": "1.0.0",
     "authors": [
         {

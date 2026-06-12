@@ -1,0 +1,19 @@
+{
+    "id": "uwukitty.rightclick-plus",
+    "name": "RightClick+",
+    "description": "Add custom buttons to Discord's right-click menu. Define your own actions with dynamic variables.",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "uwukitty",
+            "id": "0"
+        }
+    ],
+    "main": "index.js",
+    "vendetta": {
+        "icon": "CopyIcon"
+    },
+    "bunny": {
+        "icon": "CopyIcon"
+    }
+}

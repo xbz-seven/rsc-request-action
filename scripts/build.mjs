@@ -23,6 +23,10 @@ for (const plug of await readdir("./plugins")) {
             plugins: [
                 swc({
                     jsc: {
+                        parser: {
+                            syntax: "typescript",
+                            tsx: true,
+                        },
                         target: undefined,
                         transform: {
                             react: {
