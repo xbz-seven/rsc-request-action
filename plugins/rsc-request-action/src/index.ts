@@ -17,32 +17,35 @@ export default {
                 if (key !== "MessageLongPressActionSheet" || !message) return;
 
                 component.then(mod => {
-                    const unp = patcher.after("default", mod, (_, comp) => {
+                    const sheet = mod?.default || mod;
+                    if (typeof sheet !== "function") return;
+
+                    const link = `https://discord.com/channels/${message.guild_id || "@me"}/${message.channel_id}/${message.id}`;
+
+                    const unp = patcher.after("default", { default: sheet }, (_, comp) => {
                         React.useEffect(() => () => unp(), []);
 
                         const buttons = findInReactTree(
                             comp,
-                            (x) => x?.[0]?.type?.name === "ButtonRow"
+                            x => x?.[0]?.type?.name === "ButtonRow"
                         );
                         if (!buttons) return comp;
 
-                        const link = `https://discord.com/channels/${message.guild_id || "@me"}/${message.channel_id}/${message.id}`;
                         const ButtonType = buttons[0]?.type;
+                        if (!ButtonType) return comp;
 
-                        if (ButtonType) {
-                            buttons.push(
-                                React.createElement(ButtonType, {
-                                    label: "Request Action",
-                                    icon: getAssetIDByName?.("CopyIcon"),
-                                    onPress: () => {
-                                        clipboard.setString(
-                                            `UID: ${message.author.id}\nReason: \nAction: \nPROOF: ${link}`
-                                        );
-                                        showToast?.("Copied to clipboard", getAssetIDByName?.("CopyIcon"));
-                                    },
-                                })
-                            );
-                        }
+                        buttons.push(
+                            React.createElement(ButtonType, {
+                                label: "Request Action",
+                                icon: getAssetIDByName?.("CopyIcon"),
+                                onPress: () => {
+                                    clipboard.setString(
+                                        `UID: ${message.author.id}\nReason: \nAction: \nPROOF: ${link}`
+                                    );
+                                    showToast?.("Copied to clipboard", getAssetIDByName?.("CopyIcon"));
+                                },
+                            })
+                        );
                     });
 
                     patches.push(unp);
